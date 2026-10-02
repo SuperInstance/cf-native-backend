@@ -1,0 +1,8 @@
+FAIL H0-cellgen.py-present — missing deliverable cellgen.py
+FAIL H0-hibernate.sh-present — missing deliverable hibernate.sh
+FAIL H0-wake.sh-present — missing deliverable wake.sh
+FAIL H1-genesis-anchor-verifies — cellgen.py missing
+FAIL H2-doubt-grammar-complete — hibernate.sh missing
+FAIL H3-wake-reproduces-tip — wake.sh missing
+
+6 PIN(S) RED (pins/pins-hello.sh)
