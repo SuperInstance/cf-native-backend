@@ -41,6 +41,9 @@ provisioned yet).
 2. **B3 (days 4–8) — multi-agent concurrency.** Fork-per-task: N agent-sessions
    fork the same quilt, work concurrent chains, then a merge/review surface with
    semantic (cell-level) diffs → no conflicts. This is the 25% and the whole thesis.
+   **DESIGN landed (PR #5 → 7aafba4): `docs/B3-DESIGN.md`** — fork-per-task via
+   `fork()`, cell = diff quantum, conflict rule (relocate to unit identity),
+   P2 external pusher first. Build order: B3.1 quiltgen → B3.5 live gate.
 3. **B4 (days 9–11) — the surface.** Minimal web UI: timeline, rewind,
    doubt-query ("what trust lets through"). This is the UX 25% + the video.
 4. **Days 12+ — video + submission.** 5–10 min narrative. Everything beyond B4
