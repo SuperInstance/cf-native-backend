@@ -23,7 +23,12 @@
  * The repo IS the runtime: the Worker holds no cell state; a cell exists
  * only as its Artifacts repo, and wakes when its URL is hit.
  *
- * Deliberately NOT here (B4): concurrency orchestration, forking, UI.
+ * B4 surface (the browser surface + its read endpoint), wired here add-only:
+ *   GET  /ui                      → the quilt web UI (worker/src/webui.ts)
+ *   GET  /quilt/<repo>[?ref=…]    → read-only quilt state JSON for the UI
+ *                                   (worker/src/quilt-api.ts)
+ *
+ * Deliberately NOT here (B4+): concurrency orchestration, forking, auth.
  */
 
 import {
@@ -32,6 +37,8 @@ import {
   type Genesis,
 } from "./chain.js";
 import { makeGitApi, type GitApiEnv } from "./git-api.js";
+import { makeQuiltApi, type QuiltApiEnv } from "./quilt-api.js";
+import { makeWebUi } from "./webui.js";
 
 /**
  * Worker bindings + vars. Extends the git-api env (B3.4) so one `Env` serves
@@ -47,6 +54,14 @@ export interface Env extends GitApiEnv {}
  * the closure per request.
  */
 const gitApi: ExportedHandler<GitApiEnv> = makeGitApi();
+
+/**
+ * B4 handlers, one instance per isolate, same statelessness argument as gitApi:
+ * the read-only quilt data endpoint (GET /quilt/<repo>) and the UI page
+ * (GET /ui). Both hold no cell state.
+ */
+const quiltApi = makeQuiltApi();
+const webUi = makeWebUi();
 
 const REPO_PREFIX = "cell-";
 const DEFAULT_BRANCH = "main"; // cell repos are minted with setDefaultBranch "main"
@@ -69,11 +84,28 @@ export default {
       (url.pathname === "/" || url.pathname === "/health")
     ) {
       return json({
-        build: "b2-membrane+b3-6-git-api",
+        build: "b2-membrane+b3-6-git-api+b4-web",
         scheme: SCHEME,
         wake: "GET /cell/<id>[?tail=1..64]",
         git_api: ["POST /diff", "POST /merge"],
+        ui: "GET /ui",
+        quilt: "GET /quilt/<repo>[?ref=<sha|branch>][?limit=N][?tail=N]",
       });
+    }
+
+    // B4 — the browser surface (static HTML page) and its read-only data feed.
+    // Add-only: nothing above changes; GET /ui and GET /quilt/<repo> are new.
+    if (
+      request.method === "GET" &&
+      (url.pathname === "/ui" || url.pathname === "/ui/")
+    ) {
+      return webUi.fetch(request);
+    }
+    if (
+      request.method === "GET" &&
+      /^\/quilt\/[a-z0-9][a-z0-9-]{0,62}$/.test(url.pathname)
+    ) {
+      return quiltApi.fetch(request, env as QuiltApiEnv);
     }
 
     // B3.6 — dispatch the git-api surface (B3.4). Only these two POST routes

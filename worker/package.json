@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "typecheck": "tsc --noEmit",
+    "smoke:web": "node --experimental-strip-types test/b4-web-smoke.mjs",
     "parity": "node --experimental-strip-types test/parity.mjs"
   },
   "devDependencies": {
