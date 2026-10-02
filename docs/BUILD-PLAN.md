@@ -57,7 +57,11 @@ provisioned yet).
    **B3.4 landed (PR #9 → 7f24510): `worker/src/artifacts-reader.ts` (RepoReader drop-in)
    + `pusher.ts` (P2 manifest) + `git-api.ts` (/diff + /merge) + worker-rehearsal** —
    adapter drives diff byte-identical to LocalGit; P2 manifest round-trips a dumb
-   executor → clone-back verifies ok; token revoked. Next: B3.5 live gate + N-agent rig.
+   executor → clone-back verifies ok; token revoked.
+   **B3.5 landed (PR #10 → d07d1eb): `worker/test/nagent-rehearsal.mjs`** — N=8 forks
+   merged sequentially through merge.ts with ZERO data loss: disjoint 10/10 survived,
+   conflicts 7/7 sequentialize, idempotent 7, edges unioned 12; final quilt.ts + python ok.
+   **B3 (concurrency) complete OFFLINE. Remaining: LIVE gate (deploy + Artifacts) — Casey green-lit.**
 3. **B4 (days 9–11) — the surface.** Minimal web UI: timeline, rewind,
    doubt-query ("what trust lets through"). This is the UX 25% + the video.
 4. **Days 12+ — video + submission.** 5–10 min narrative. Everything beyond B4
