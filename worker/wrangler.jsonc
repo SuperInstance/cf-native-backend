@@ -1,0 +1,16 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "quilt-b2-membrane",
+  "main": "src/index.ts",
+  "compatibility_date": "2026-09-01",
+  // Artifacts binding — exact shape from the official docs:
+  // https://developers.cloudflare.com/artifacts/api/workers-binding/
+  // The namespace must exist in your account (see `wrangler artifacts` commands
+  // or POST /artifacts/namespaces). "default" is the docs' example namespace.
+  "artifacts": [
+    {
+      "binding": "ARTIFACTS",
+      "namespace": "default"
+    }
+  ]
+}
