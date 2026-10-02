@@ -50,7 +50,11 @@ provisioned yet).
    **B3.2 landed (PR #7 → 82a7890): `worker/src/diff.ts` (adapter-pure RepoReader)
    + `diff-property.mjs`** — conflict rule proven on 1200 random fork pairs
    (disjoint⇒∅ 493/493, same-unit⇒exact 359/359, identical⇒idempotent 348/348;
-   edge units never conflict — presence semantics). Next: B3.3 merge/apply + resolution.
+   edge units never conflict — presence semantics).
+   **B3.3 landed (PR #8 → d9dc66c): `worker/src/merge.ts` + `merge-rehearsal.mjs`**
+   — take-fork/take-main/sequentialize + receipt re-mining; 4 merges verify ok via
+   TS quilt.ts AND python quiltgen.py, round-trip through a local bare remote.
+   Next: B3.4 Worker surface (Artifacts adapter + P2 pusher).
 3. **B4 (days 9–11) — the surface.** Minimal web UI: timeline, rewind,
    doubt-query ("what trust lets through"). This is the UX 25% + the video.
 4. **Days 12+ — video + submission.** 5–10 min narrative. Everything beyond B4
