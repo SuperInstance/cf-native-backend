@@ -1,0 +1,5 @@
+PASS H1-genesis-anchor-verifies — chain_ok=True positions=1000 tip_match=True count_match=True
+PASS H2-doubt-grammar-complete — fields_present=4/4 missing=none id=a4116e410378
+PASS H3-wake-reproduces-tip — cold-clone tip=2de128a79408ffe0 positions=1000 tip_match=True
+
+ALL PINS GREEN (pins/pins-hello.sh)
