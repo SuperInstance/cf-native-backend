@@ -44,6 +44,9 @@ provisioned yet).
    **DESIGN landed (PR #5 → 7aafba4): `docs/B3-DESIGN.md`** — fork-per-task via
    `fork()`, cell = diff quantum, conflict rule (relocate to unit identity),
    P2 external pusher first. Build order: B3.1 quiltgen → B3.5 live gate.
+   **B3.1 landed (PR #6 → 73e91d6): `lattice/quiltgen.py` + `worker/src/quilt.ts`
+   + `quilt-parity.mjs`** — 4-cell quilt, python↔TS parity byte-identical
+   (4 cells + routing tip), tamper caught. Next: B3.2 diff core + property test.
 3. **B4 (days 9–11) — the surface.** Minimal web UI: timeline, rewind,
    doubt-query ("what trust lets through"). This is the UX 25% + the video.
 4. **Days 12+ — video + submission.** 5–10 min narrative. Everything beyond B4
