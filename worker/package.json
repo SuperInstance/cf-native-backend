@@ -1,0 +1,12 @@
+{
+  "name": "quilt-b2-membrane",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "parity": "node --experimental-strip-types test/parity.mjs"
+  },
+  "devDependencies": {
+    "typescript": "^5.9.3"
+  }
+}
