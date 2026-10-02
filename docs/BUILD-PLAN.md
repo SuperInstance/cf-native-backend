@@ -54,7 +54,10 @@ provisioned yet).
    **B3.3 landed (PR #8 → d9dc66c): `worker/src/merge.ts` + `merge-rehearsal.mjs`**
    — take-fork/take-main/sequentialize + receipt re-mining; 4 merges verify ok via
    TS quilt.ts AND python quiltgen.py, round-trip through a local bare remote.
-   Next: B3.4 Worker surface (Artifacts adapter + P2 pusher).
+   **B3.4 landed (PR #9 → 7f24510): `worker/src/artifacts-reader.ts` (RepoReader drop-in)
+   + `pusher.ts` (P2 manifest) + `git-api.ts` (/diff + /merge) + worker-rehearsal** —
+   adapter drives diff byte-identical to LocalGit; P2 manifest round-trips a dumb
+   executor → clone-back verifies ok; token revoked. Next: B3.5 live gate + N-agent rig.
 3. **B4 (days 9–11) — the surface.** Minimal web UI: timeline, rewind,
    doubt-query ("what trust lets through"). This is the UX 25% + the video.
 4. **Days 12+ — video + submission.** 5–10 min narrative. Everything beyond B4
