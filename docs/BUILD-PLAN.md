@@ -46,7 +46,11 @@ provisioned yet).
    P2 external pusher first. Build order: B3.1 quiltgen → B3.5 live gate.
    **B3.1 landed (PR #6 → 73e91d6): `lattice/quiltgen.py` + `worker/src/quilt.ts`
    + `quilt-parity.mjs`** — 4-cell quilt, python↔TS parity byte-identical
-   (4 cells + routing tip), tamper caught. Next: B3.2 diff core + property test.
+   (4 cells + routing tip), tamper caught.
+   **B3.2 landed (PR #7 → 82a7890): `worker/src/diff.ts` (adapter-pure RepoReader)
+   + `diff-property.mjs`** — conflict rule proven on 1200 random fork pairs
+   (disjoint⇒∅ 493/493, same-unit⇒exact 359/359, identical⇒idempotent 348/348;
+   edge units never conflict — presence semantics). Next: B3.3 merge/apply + resolution.
 3. **B4 (days 9–11) — the surface.** Minimal web UI: timeline, rewind,
    doubt-query ("what trust lets through"). This is the UX 25% + the video.
 4. **Days 12+ — video + submission.** 5–10 min narrative. Everything beyond B4
