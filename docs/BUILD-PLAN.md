@@ -21,19 +21,23 @@ conflict the way two humans editing one file do.
 - **Hard floor:** Workers + Artifacts, multiple agents working concurrently,
   MIT/Apache/BSD LICENSE, 5–10 min video. US/Canada, one submission per entrant.
 
-## Where we are (B1 — landed)
-One physics receipt: a measured, pinned wake-latency curve proving cold-start
+## Where we are (B1 + B2 — landed)
+B1: one physics receipt — a measured, pinned wake-latency curve proving cold-start
 cost is *reading+hashing the receipt chain*, not moving it
 (100k positions ≈ 2.5 s, 1M ≈ 16 s on a 2-core box). Honest, pins green.
 
-But: **zero Cloudflare code.** No Worker, no Artifacts binding, no wrangler, no
-frontend. The stack is sh+git+Python that cannot run on the mandated substrate.
+B2 (landed, PR #4 → merged 1a19518): the receipt-chain is now a **TypeScript
+Worker with an Artifacts binding** — `GET /cell/<id>` wakes the cell on URL.
+fnv1a-64 chain is 1:1 with B1 Python (parity verified: n=5000 + n=100k, tip
+byte-identical, tamper caught @0). Type-check strict PASS. In-worker verify
+≈455k pos/s (≈9× B1 Python). Still unverified: no live deploy (no namespace
+provisioned yet).
 
 ## Gaps → 12-day plan
-1. **B2 (days 1–3) — port to the substrate.** Reimplement the cell receipt-chain
-   in TypeScript as a Worker with an Artifacts binding. `GET /cell/<id>` wakes
-   the cell on URL — the first proof of "repo IS runtime" on Workers+Artifacts.
-   Keep the B1 physics pins honest (re-run the wake curve on CF).
+1. **B2 (days 1–3) — port to the substrate. ✅ LANDED (PR #4 → 1a19518).**
+   Reimplemented the cell receipt-chain in TypeScript as a Worker with an
+   Artifacts binding. `GET /cell/<id>` wakes the cell on URL. Parity + type-check
+   green. TODO: live deploy (provision namespace) + re-run the wake curve on CF.
 2. **B3 (days 4–8) — multi-agent concurrency.** Fork-per-task: N agent-sessions
    fork the same quilt, work concurrent chains, then a merge/review surface with
    semantic (cell-level) diffs → no conflicts. This is the 25% and the whole thesis.
