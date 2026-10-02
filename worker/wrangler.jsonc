@@ -12,5 +12,20 @@
       "binding": "ARTIFACTS",
       "namespace": "default"
     }
-  ]
+  ],
+  // B3.6 — vars for the git-api surface (worker/src/git-api.ts, wired into the
+  // router in src/index.ts: POST /diff, POST /merge). All three are OPTIONAL;
+  // unset ⇒ the code default documented below.
+  //
+  //   QUILT_REPO    default landing (main) repo name. Code default "quilt-demo".
+  //                 Set here to point the live surface at the real quilt repo.
+  //   FORK_REPO     default fork repo name. Code default "<main>--task".
+  //                 Left UNSET on purpose — an empty string is NOT "unset"
+  //                 (nullish-coalescing only), so "" would become a repo name.
+  //   MERGE_SECRET  shared secret for POST /merge (`x-merge-secret` header).
+  //                 Do NOT put it here — `wrangler secret put MERGE_SECRET`.
+  //                 Unset/empty ⇒ POST /merge runs open (dev/offline mode).
+  "vars": {
+    "QUILT_REPO": "quilt-demo"
+  }
 }

@@ -1,16 +1,29 @@
 /**
- * index.ts — B2 Membrane Worker: wake-on-URL for a lattice cell.
+ * index.ts — the Membrane Worker router.
  *
- * GET /cell/<id>
- *   → open the cell's Artifacts repo (binding ARTIFACTS)
- *   → read memory files (receipts.txt + genesis.json) via readFile
- *   → verify the fnv1a-64 chain genesis→tip (chain.ts — the B1 physics)
- *   → return cell state + receipt tail + wake timings
+ * B2 surface (wake-on-URL for a lattice cell):
+ *   GET /cell/<id>
+ *     → open the cell's Artifacts repo (binding ARTIFACTS)
+ *     → read memory files (receipts.txt + genesis.json) via readFile
+ *     → verify the fnv1a-64 chain genesis→tip (chain.ts — the B1 physics)
+ *     → return cell state + receipt tail + wake timings
+ *   GET / (and GET /health)
+ *     → build banner + the surface's route list
+ *
+ * B3.6 surface (the git-api, wired live here):
+ *   POST /diff   { base, fork, main, repos? }               → semantic diff
+ *   POST /merge  { base, fork, main, resolutions, repos? }  → resolved quilt
+ *                                                             + push manifest
+ *   (worker/src/git-api.ts, B3.4 — read-only compute over ARTIFACTS; the only
+ *   side effect is POST /merge minting the ≤300 s single-use write token.)
+ *
+ * This file is a ROUTER only: it dispatches to `wakeCell` (B2) or to the
+ * git-api handler (B3.6) and holds no cell state of its own.
  *
  * The repo IS the runtime: the Worker holds no cell state; a cell exists
  * only as its Artifacts repo, and wakes when its URL is hit.
  *
- * Deliberately NOT here (B3/B4): concurrency, forking, merge surface, UI.
+ * Deliberately NOT here (B4): concurrency orchestration, forking, UI.
  */
 
 import {
@@ -18,10 +31,22 @@ import {
   verifyChain,
   type Genesis,
 } from "./chain.js";
+import { makeGitApi, type GitApiEnv } from "./git-api.js";
 
-export interface Env {
-  ARTIFACTS: Artifacts;
-}
+/**
+ * Worker bindings + vars. Extends the git-api env (B3.4) so one `Env` serves
+ * both surfaces: `ARTIFACTS` (binding) plus the OPTIONAL git-api vars
+ * `QUILT_REPO` / `FORK_REPO` / `MERGE_SECRET` (unset ⇒ documented defaults;
+ * unset MERGE_SECRET ⇒ open dev/offline mode).
+ */
+export interface Env extends GitApiEnv {}
+
+/**
+ * One git-api handler instance per isolate (B3.6). It is stateless — a pure
+ * dispatcher over the request + env — so reuse is safe and avoids re-allocating
+ * the closure per request.
+ */
+const gitApi: ExportedHandler<GitApiEnv> = makeGitApi();
 
 const REPO_PREFIX = "cell-";
 const DEFAULT_BRANCH = "main"; // cell repos are minted with setDefaultBranch "main"
@@ -34,7 +59,9 @@ function json(body: unknown, status = 200): Response {
 }
 
 export default {
-  async fetch(request: Request, env: Env): Promise<Response> {
+  // `request` is left to contextual typing from `satisfies ExportedHandler`
+  // (its CF-properties type is narrower than the lib's default `Request`).
+  async fetch(request, env: Env, ctx: ExecutionContext): Promise<Response> {
     const url = new URL(request.url);
 
     if (
@@ -42,10 +69,21 @@ export default {
       (url.pathname === "/" || url.pathname === "/health")
     ) {
       return json({
-        build: "b2-membrane",
+        build: "b2-membrane+b3-6-git-api",
         scheme: SCHEME,
         wake: "GET /cell/<id>[?tail=1..64]",
+        git_api: ["POST /diff", "POST /merge"],
       });
+    }
+
+    // B3.6 — dispatch the git-api surface (B3.4). Only these two POST routes
+    // are forwarded; every GET (and everything else) falls through to the B2
+    // wake surface below, unchanged.
+    if (
+      request.method === "POST" &&
+      (url.pathname === "/diff" || url.pathname === "/merge")
+    ) {
+      return gitApi.fetch!(request, env, ctx);
     }
 
     const m = /^\/cell\/([a-z0-9][a-z0-9-]{0,62})$/.exec(url.pathname);
