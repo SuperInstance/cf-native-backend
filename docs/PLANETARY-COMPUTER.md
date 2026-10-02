@@ -154,6 +154,29 @@ build is a one-evening seam over sparse-checkout.
    design-only at entry time, and this doc must not be quoted as if they
    were otherwise.
 
+## 8. The cog ladder above this lattice
+
+The lattice runs cheap cells, so the obvious question is which cells still
+need an LLM. The fleet's answer is a four-rung cog ladder (full contract:
+git-agent `docs/COG-LADDER.md`, PR #6):
+
+| Level | Form | Lattice meaning |
+|-------|------|-----------------|
+| L0 | prompt + LLM | a cell that calls a model per invocation — expensive at scale |
+| L1 | CoT harvested → mock corpus | recorded (input, prompt, output) triples become test fixtures |
+| L2 | tools for repeated sub-tasks | deterministic stdlib cells — this doc's subject |
+| L3 | repo = cog, LLM retained as oracle | a rule cog certified against recorded oracle rows |
+
+Lattice doctrine: every L0-flavored cell should be treated as a migration
+candidate down the ladder. The graduation criterion is the equivalence pin:
+the cheap path must match the recorded oracle on every corpus row before
+the model call is retired. Cells that never graduate stay L0 honestly —
+the ladder forbids retiring a call on vibes.
+
+2026-10-02 fleet survey verdict: git-agent owns the L3 substrate (hash-chained
+WAL + provider seam + pin culture); the mesh's open hole is boot verification
+— no edge cell currently attests the bits it boots.
+
 ## 7. What the next builds adjudicate
 
 | build | branch | adjudicates |
