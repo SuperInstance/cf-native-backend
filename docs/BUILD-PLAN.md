@@ -61,11 +61,13 @@ provisioned yet).
    **B3.5 landed (PR #10 → d07d1eb): `worker/test/nagent-rehearsal.mjs`** — N=8 forks
    merged sequentially through merge.ts with ZERO data loss: disjoint 10/10 survived,
    conflicts 7/7 sequentialize, idempotent 7, edges unioned 12; final quilt.ts + python ok.
-   **B3 (concurrency) complete OFFLINE.** **LIVE gate OPEN:** B2 Worker deployed
-   (quilt-b2-membrane.casey-digennaro.workers.dev) — wake-on-URL live on real
-   Artifacts (178 ms, tipMatch). **B3.6 landed (PR #11 → e2d419a):** index.ts routes
-   POST /diff + POST /merge to the git-api surface (wired, not yet served). Next:
-   mint a quilt into repos + live-test /diff + /merge, then fork() + write-token flow live.
+   **B3 (concurrency) complete OFFLINE.** **LIVE gate OPEN + MERGE SURFACE LIVE:**
+   B2 Worker deployed (quilt-b2-membrane.casey-digennaro.workers.dev). **B3.6 landed
+   (PR #11 → e2d419a)** + live-verified: POST /diff + /merge run on real Artifacts —
+   disjoint edits → fastPath (fork-only data/gps, main-only data/compass, 0 conflicts);
+   same-cell divergent edits → conflict detected (cell:data/gps) + resolved take-main +
+   P2 manifest + minted write token. Recipe: worker/LIVE-MERGE-RECEIPT.md. Next: apply a
+   P2 manifest (write path) + sequentialize live + B4 web surface + video.
 3. **B4 (days 9–11) — the surface.** Minimal web UI: timeline, rewind,
    doubt-query ("what trust lets through"). This is the UX 25% + the video.
 4. **Days 12+ — video + submission.** 5–10 min narrative. Everything beyond B4
